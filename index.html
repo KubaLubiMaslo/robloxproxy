@@ -3,45 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxy Fetcher</title>
+    <title>Fetch Raw Text</title>
 </head>
 <body>
-    <h1>Proxy Fetcher</h1>
-    <form id="proxyForm">
-        <label for="urlInput">Enter URL:</label>
-        <input type="text" id="urlInput" placeholder="Enter URL here" style="width: 80%;" required>
-        <button type="submit">Fetch</button>
-    </form>
-    <h2>Response:</h2>
-    <pre id="responseDisplay" style="background: #f4f4f4; padding: 10px; border: 1px solid #ccc;"></pre>
+    <h1>Fetch Raw Text</h1>
+    <input id="urlInput" type="text" placeholder="Enter URL (e.g., https://rawcode.com)">
+    <button onclick="fetchRawText()">Fetch</button>
+    <pre id="output"></pre>
 
     <script>
-        const form = document.getElementById('proxyForm');
-        const responseDisplay = document.getElementById('responseDisplay');
-
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const urlInput = document.getElementById('urlInput').value;
-
+        async function fetchRawText() {
+            const url = document.getElementById('urlInput').value;
             try {
-                const response = await fetch('/proxy', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ url: urlInput })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
-
-                const data = await response.text();
-                responseDisplay.textContent = data;
+                const response = await fetch(`/search?url=${encodeURIComponent(url)}`);
+                const text = await response.text();
+                document.getElementById('output').textContent = text;
             } catch (error) {
-                responseDisplay.textContent = `Error: ${error.message}`;
+                document.getElementById('output').textContent = `Error: ${error.message}`;
             }
-        });
+        }
     </script>
 </body>
 </html>
