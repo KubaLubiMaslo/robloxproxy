@@ -6,41 +6,53 @@
   <title>Fetch Raw Text</title>
 </head>
 <body>
-  <div id="content">Loading...</div>
+  <h1>Fetched Raw Content from URL</h1>
+  <pre id="content" style="word-wrap: break-word; white-space: pre-wrap;">Loading...</pre>
 
   <script>
-    // Function to get the query parameter
-    function getQueryParameter() {
+    // Function to get the URL from the query string
+    function getQueryParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.keys().next().value; // The first key is the URL
+      return urlParams.get(name);
     }
 
-    async function fetchAndDisplayContent() {
-      const rawUrl = getQueryParameter();
-      console.log(rawUrl);
-
-      if (!rawUrl) {
-        document.getElementById('content').innerText = "No URL provided in the query string.";
-        return;
-      }
-
-      try {
-        // Validate and fetch the content
-        const response = await fetch(rawUrl);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data: ${response.statusText}`);
-        }
-        const text = await response.text();
-
-        // Display the content
-        document.getElementById('content').innerText = text;
-      } catch (error) {
-        document.getElementById('content').innerText = `Error: ${error.message}`;
-      }
+    // Function to escape HTML characters
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
     }
 
-    // Trigger the fetch and display logic
-    fetchAndDisplayContent();
+    // Function to fetch and display the raw content
+    function fetchContent(url) {
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();  // Get raw text from the URL
+        })
+        .then(data => {
+          // Escape the HTML content to prevent rendering as HTML and ensure raw text display
+          const escapedContent = escapeHtml(data);
+          
+          // Display the escaped raw text content inside the 'content' pre tag
+          document.getElementById('content').textContent = escapedContent;
+        })
+        .catch(error => {
+          document.getElementById('content').textContent = 'Error fetching content: ' + error;
+        });
+    }
+
+    // Get the URL from the query parameter and fetch the content
+    const url = getQueryParam('url');  // Get the 'url' parameter from query string
+    if (url) {
+      fetchContent(url);  // Fetch the content if the URL is provided
+    } else {
+      document.getElementById('content').textContent = 'No URL provided in the query string.';
+    }
   </script>
 </body>
 </html>
