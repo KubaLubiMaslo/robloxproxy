@@ -1,27 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fetch Raw Text</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fetch Raw Text</title>
 </head>
 <body>
-    <h1>Fetch Raw Text</h1>
-    <input id="urlInput" type="text" placeholder="Enter URL (e.g., https://rawcode.com)">
-    <button onclick="fetchRawText()">Fetch</button>
-    <pre id="output"></pre>
+  <div id="content">Loading...</div>
 
-    <script>
-        async function fetchRawText() {
-            const url = document.getElementById('urlInput').value;
-            try {
-                const response = await fetch(`/search?url=${encodeURIComponent(url)}`);
-                const text = await response.text();
-                document.getElementById('output').textContent = text;
-            } catch (error) {
-                document.getElementById('output').textContent = `Error: ${error.message}`;
-            }
+  <script>
+    // Function to get the query parameter
+    function getQueryParameter() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.keys().next().value; // The first key is the URL
+    }
+
+    async function fetchAndDisplayContent() {
+      const rawUrl = getQueryParameter();
+
+      if (!rawUrl) {
+        document.getElementById('content').innerText = "No URL provided in the query string.";
+        return;
+      }
+
+      try {
+        // Validate and fetch the content
+        const response = await fetch(rawUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
-    </script>
+        const text = await response.text();
+
+        // Display the content
+        document.getElementById('content').innerText = text;
+      } catch (error) {
+        document.getElementById('content').innerText = `Error: ${error.message}`;
+      }
+    }
+
+    // Trigger the fetch and display logic
+    fetchAndDisplayContent();
+  </script>
 </body>
 </html>
