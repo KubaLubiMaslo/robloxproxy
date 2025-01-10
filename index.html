@@ -17,6 +17,7 @@
 
     async function fetchAndDisplayContent() {
       const rawUrl = getQueryParameter();
+      console.log(rawUrl);
 
       if (!rawUrl) {
         document.getElementById('content').innerText = "No URL provided in the query string.";
