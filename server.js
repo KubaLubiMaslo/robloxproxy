@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 const PORT = 3000;
 
 http.createServer(async (req, res) => {
-    const rawUrl = 'https://games.roblox.com/v1/games/115863998093509/servers/Public?sortOrder=R&excludeFullGames=false';
+    const rawUrl = 'https://games.roblox.com/v1/games/115863998093509/servers/Public?sortOrder=R&excludeFullGames=false&Limit=100';
 
     try {
         const response = await fetch(rawUrl);
